@@ -38,15 +38,18 @@ const fetch = (client, database, view) =>{
                 try {
                     console.log(f)
                 } catch (e) {
-                    reject(e)
-                }
-                resolve(count)
+                    throw e
+                }                
             } 
+            resolve(count)
         })
     })
 }
 
+
+
 for (relation of relations){
+    var startTime = new Date()
     const [database, schema, view] = relation.split('::')
     if(!pools[database]){
         pools[database] = new Pool({
@@ -57,7 +60,7 @@ for (relation of relations){
             database: database
         })
     }
-    pools[database].connect(async (err, client, release) => {
+    pools[database].connect(async (err, client,release) => {
         if (err) throw err
         //Getting the list of columns, then adjust it
         let sql = `SELECT column_name FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${view}' ORDER BY ordinal_position`
@@ -76,7 +79,12 @@ for (relation of relations){
         try {
             while (await fetch(client, database, view) !== 0) {}
         } catch (e) { throw e }
-        await client.query('COMMIT')
+        await client.query(`COMMIT`)
+        //await client.end()  
+        const endTime = new Date()
+        var diff = endTime.getTime() - startTime.getTime();
+        var workTime = diff / 1000
+        console.log(`workingTime for ${schema}.${view} in ${database} is ${workTime} (sec). End`)
         release()
     })    
 }
