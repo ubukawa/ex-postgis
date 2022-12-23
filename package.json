@@ -1,0 +1,25 @@
+{
+  "name": "ex-postgis",
+  "version": "1.0.0",
+  "description": "practice of accessing the PostGIS server with nodejs pg",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ubukawa/ex-postgis.git"
+  },
+  "keywords": [],
+  "author": "ubukawa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ubukawa/ex-postgis/issues"
+  },
+  "homepage": "https://github.com/ubukawa/ex-postgis#readme",
+  "dependencies": {
+    "config": "^3.3.8",
+    "hjson": "^3.2.2",
+    "pg": "^8.8.0"
+  }
+}
