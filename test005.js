@@ -1,6 +1,7 @@
 const config = require('config')
 const { Pool, Query } = require('pg')
 const modify = require('./modify.js')
+const fs = require('fs')
 
 // config constants
 const host = config.get('host')
@@ -9,10 +10,23 @@ const dbUSer = config.get('dbUser')
 const dbPassword = config.get('dbPassword')
 const relations = config.get('relations')
 const fetchSize = config.get('fetchSize')
+const outTextDir = config.get('outTextDir')
 
 let pools = {}
 
-const fetch = (client, database, view) =>{
+const noPressureWrite = (stream, f) => {
+    return new Promise((res) => {
+        if (stream.write(`\x1e${JSON.stringify(f)}\n`)){
+            res()
+        } else {
+            stream.once('drain', () => {
+                res()
+            })
+        }
+    })
+}
+
+const fetch = (client, database, view, stream) =>{
     return new Promise((resolve, reject) => {
         let count = 0
         let features = []
@@ -37,11 +51,13 @@ const fetch = (client, database, view) =>{
         .on('end', async () => {
             for (f of features) {
                 try {
-                    console.log(f)
+                    //console.log(f)
+                    await noPressureWrite(stream, f)
                 } catch (e) {
                     throw e
                 }                
             } 
+            stream.end()
             resolve(count)
         })
     })
@@ -52,6 +68,7 @@ const fetch = (client, database, view) =>{
 for (relation of relations){
     var startTime = new Date()
     const [database, schema, view] = relation.split('::')
+    const stream = fs.createWriteStream(`${outTextDir}/${database}-${schema}-${view}.txt`)
     if(!pools[database]){
         pools[database] = new Pool({
             host: host,
@@ -78,7 +95,7 @@ for (relation of relations){
         cols = await client.query(sql)
         //console.log(cols.rows)
         try {
-            while (await fetch(client, database, view) !== 0) {}
+            while (await fetch(client, database, view, stream) !== 0) {}
         } catch (e) { throw e }
         await client.query(`COMMIT`)
         //await client.end()  

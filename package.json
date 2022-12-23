@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ubukawa/ex-postgis#readme",
   "dependencies": {
     "config": "^3.3.8",
+    "fs": "^0.0.1-security",
     "hjson": "^3.2.2",
     "pg": "^8.8.0"
   }

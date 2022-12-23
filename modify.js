@@ -31,7 +31,34 @@ const layerEdit = {
         }
         //write someting to adjust properties, if needed
         return f
-    }
+    },
+    custom_planet_ocean_08_a: f => {
+        f.tippecanoe = {
+            layer: 'ocean',
+            minzoom: 3,
+            maxzoom: 6
+        }
+        //write someting to adjust properties, if needed
+        return f
+    },
+    unmap_wbya10_a: f => {
+        f.tippecanoe = {
+            layer: 'wbya10',
+            minzoom: 3,
+            maxzoom: 6
+        }
+        //write someting to adjust properties, if needed
+        return f
+    },
+    unmap_dral10_l: f => {
+        f.tippecanoe = {
+            layer: 'dral10',
+            minzoom: 3,
+            maxzoom: 6
+        }
+        //write someting to adjust properties, if needed
+        return f
+    }    
 }
 
 module.exports = (f) => {
