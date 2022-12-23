@@ -1,0 +1,11 @@
+{
+    host: localhost
+    port: 5432
+    dbUser: postgres
+    dbPassword: postgres
+    relations:[
+        data_base::schema::viewOrTable1
+        data_base::schema::viewOrTable2
+    ]
+    fetchSize: 30000
+}
